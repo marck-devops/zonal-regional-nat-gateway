@@ -2,14 +2,14 @@
 
 Terraform configurations for two AWS VPC designs that give private workloads outbound internet access. Each design is a separate stack and a separate VPC (`10.0.0.0/16`). Deploy one directory at a time.
 
+![Zonal design on top, with a separate NAT gateway for each Availability Zone, and regional design below, with both private subnets sharing one NAT gateway.](docs/architecture.png)
+
 | Design | NAT gateways | Route tables | Failure domain |
 | --- | --- | --- | --- |
 | [Zonal](Zonal/) | One public NAT gateway in each Availability Zone | Each private subnet has its own route table | An Availability Zone failure does not remove outbound access from the other zone |
 | [Regional](Regional/) | One regional NAT gateway for the VPC | Both private subnets share one route table | AWS expands the gateway across Availability Zones as workloads appear |
 
 ## Architecture
-
-![Zonal design on top, with a separate NAT gateway for each Availability Zone, and regional design below, with both private subnets sharing one NAT gateway.](docs/architecture.png)
 
 Both stacks use the first two opted-in Availability Zones in the selected region. The default region is `us-east-1`.
 
