@@ -9,6 +9,8 @@ Terraform configurations for two AWS VPC designs that give private workloads out
 
 ## Architecture
 
+![Zonal NAT gateway on the left, one gateway per Availability Zone, and regional NAT gateway on the right, one gateway shared by both zones.](docs/architecture.png)
+
 Both stacks use the first two opted-in Availability Zones in the selected region. The default region is `us-east-1`.
 
 Private instances have no public IP addresses. Internet-bound traffic follows `0.0.0.0/0` to a NAT gateway, and return traffic enters through the internet gateway. AWS creates the VPC local route (`10.0.0.0/16` to `local`) on every route table, so that route is not declared in Terraform.
