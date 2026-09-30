@@ -1,6 +1,6 @@
 output "vpc_id" {
   description = "Zonal NAT VPC ID."
-  value       = aws_vpc.main.id
+  value       = module.network.vpc_id
 }
 
 output "az1_nat_gateway_id" {

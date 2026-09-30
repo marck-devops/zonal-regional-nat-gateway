@@ -2,12 +2,12 @@
 
 Terraform configurations for two AWS VPC designs that give private workloads outbound internet access. Each design is a separate stack and a separate VPC (`10.0.0.0/16`). Deploy one directory at a time.
 
-![Zonal design on top, with a separate NAT gateway for each Availability Zone, and regional design below, with both private subnets sharing one NAT gateway.](docs/architecture.png)
+![Zonal design on top, with a separate NAT gateway for each Availability Zone, and regional design below, with both private subnets sharing one NAT gateway.](docs/images/architecture.png)
 
 | Design | NAT gateways | Route tables | Failure domain |
 | --- | --- | --- | --- |
-| [Zonal](Zonal/) | One public NAT gateway in each Availability Zone | Each private subnet has its own route table | An Availability Zone failure does not remove outbound access from the other zone |
-| [Regional](Regional/) | One regional NAT gateway for the VPC | Both private subnets share one route table | AWS expands the gateway across Availability Zones as workloads appear |
+| [Zonal](zonal/) | One public NAT gateway in each Availability Zone | Each private subnet has its own route table | An Availability Zone failure does not remove outbound access from the other zone |
+| [Regional](regional/) | One regional NAT gateway for the VPC | Both private subnets share one route table | AWS expands the gateway across Availability Zones as workloads appear |
 
 ## Architecture
 
@@ -37,22 +37,23 @@ One NAT gateway is created with `availability_mode = "regional"`. It is associat
 
 ## Repository layout
 
-Each AWS resource has its own `.tf` file. Resources that belong to one Availability Zone live in `az1/` or `az2/` and are called as Terraform modules.
+Each AWS resource has its own `.tf` file. Shared network resources live in `modules/network`. Each Availability Zone is its own module.
 
 ```text
-Zonal/
-  vpc.tf
-  internet_gateway.tf
-  public_route_table.tf
-  az1/    nat-az1, public subnet, private subnet 1, EC2
-  az2/    nat-az2, public subnet, private subnet 2, EC2
-Regional/
-  vpc.tf
-  internet_gateway.tf
-  nat_gateway.tf
-  private_route_table.tf
-  az1/    private subnet 1, EC2
-  az2/    private subnet 2, EC2
+docs/
+  images/architecture.png
+zonal/
+  main.tf
+  modules/
+    network/   VPC, internet gateway, public route table
+    az1/       nat-az1, public subnet, private subnet 1, EC2
+    az2/       nat-az2, public subnet, private subnet 2, EC2
+regional/
+  main.tf
+  modules/
+    network/   VPC, internet gateway, regional NAT gateway, shared route table
+    az1/       private subnet 1, EC2
+    az2/       private subnet 2, EC2
 ```
 
 Each private subnet contains one Amazon Linux 2023 instance (`t3.micro`) with a security group that allows outbound traffic only.
@@ -67,13 +68,13 @@ Each private subnet contains one Amazon Linux 2023 instance (`t3.micro`) with a 
 ## Deploy
 
 ```powershell
-cd Zonal
+cd zonal
 terraform init
 terraform apply
 ```
 
 ```powershell
-cd Regional
+cd regional
 terraform init
 terraform apply
 ```
