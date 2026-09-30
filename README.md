@@ -9,7 +9,7 @@ Terraform configurations for two AWS VPC designs that give private workloads out
 
 ## Architecture
 
-![Zonal NAT gateway on the left, one gateway per Availability Zone, and regional NAT gateway on the right, one gateway shared by both zones.](docs/architecture.png)
+![Zonal design on top, with a separate NAT gateway for each Availability Zone, and regional design below, with both private subnets sharing one NAT gateway.](docs/architecture.png)
 
 Both stacks use the first two opted-in Availability Zones in the selected region. The default region is `us-east-1`.
 
